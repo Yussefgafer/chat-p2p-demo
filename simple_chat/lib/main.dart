@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Set system UI overlay style
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ),
+  );
+
+  // Handle Flutter errors
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+  };
+
   runApp(const ChatP2PApp());
 }
 
@@ -106,7 +122,7 @@ class _ChatHomePageState extends State<ChatHomePage> {
               ),
             ),
           ),
-          
+
           // Chat List
           Expanded(
             child: ListView.builder(
@@ -114,16 +130,23 @@ class _ChatHomePageState extends State<ChatHomePage> {
               itemBuilder: (context, index) {
                 final chat = _chats[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   child: ListTile(
                     leading: Stack(
                       children: [
                         CircleAvatar(
-                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer,
                           child: Text(
                             chat.name[0],
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onPrimaryContainer,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -150,8 +173,8 @@ class _ChatHomePageState extends State<ChatHomePage> {
                     title: Text(
                       chat.name,
                       style: TextStyle(
-                        fontWeight: chat.unreadCount > 0 
-                            ? FontWeight.bold 
+                        fontWeight: chat.unreadCount > 0
+                            ? FontWeight.bold
                             : FontWeight.normal,
                       ),
                     ),
@@ -172,7 +195,7 @@ class _ChatHomePageState extends State<ChatHomePage> {
                           const SizedBox(height: 4),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 6, 
+                              horizontal: 6,
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
@@ -212,7 +235,9 @@ class _ChatHomePageState extends State<ChatHomePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('محادثة مع $name'),
-        content: const Text('هذه نسخة تجريبية من التطبيق.\n\nالمحادثات الفعلية ستكون متاحة في النسخة الكاملة.'),
+        content: const Text(
+          'هذه نسخة تجريبية من التطبيق.\n\nالمحادثات الفعلية ستكون متاحة في النسخة الكاملة.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -228,7 +253,9 @@ class _ChatHomePageState extends State<ChatHomePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('محادثة جديدة'),
-        content: const Text('في النسخة الكاملة، ستتمكن من:\n\n• مسح QR Code للاتصال\n• البحث عن الأقران في الشبكة\n• إضافة جهات اتصال جديدة'),
+        content: const Text(
+          'في النسخة الكاملة، ستتمكن من:\n\n• مسح QR Code للاتصال\n• البحث عن الأقران في الشبكة\n• إضافة جهات اتصال جديدة',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
