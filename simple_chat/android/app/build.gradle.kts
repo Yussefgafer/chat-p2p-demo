@@ -8,7 +8,6 @@ plugins {
 android {
     namespace = "com.chatp2p.demo"
     compileSdk = 34
-    // ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -26,6 +25,9 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         multiDexEnabled = false
+
+        // Optimize for GitHub Actions
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -41,6 +43,12 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             isDebuggable = false
+        }
+    }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
