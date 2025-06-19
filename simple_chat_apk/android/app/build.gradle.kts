@@ -29,9 +29,9 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // Disable NDK to avoid build issues
+        // Configure NDK for compatibility
         ndk {
-            abiFilters.clear()
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
         }
     }
 

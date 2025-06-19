@@ -25,11 +25,15 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.32.4'
+        flutter-version: '3.27.1'
         channel: 'stable'
         
     - name: Get dependencies (Main Project)
       run: flutter pub get
+
+    - name: Clean project
+      run: flutter clean
+      working-directory: ./simple_chat_apk
 
     - name: Get dependencies (Simple Chat APK)
       run: flutter pub get
