@@ -45,6 +45,9 @@ jobs:
 
     - name: Build APK (Basic - Ultra Compatible)
       run: flutter build apk --release --no-tree-shake-icons -t lib/main_basic.dart
+
+    - name: Build APK (Simple with Animations)
+      run: flutter build apk --release --no-tree-shake-icons -t lib/main_simple.dart
       
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
@@ -71,6 +74,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-basic.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+
+    - name: Upload Simple Animated APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: chat-p2p-demo-animated.apk
         path: build/app/outputs/flutter-apk/app-release.apk
         retention-days: 30
         

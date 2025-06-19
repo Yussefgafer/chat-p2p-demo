@@ -1,0 +1,68 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients for the chat bubbles -->
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ECDC4;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#44A08D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#093637;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A8E6CF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7FCDCD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#41B3A3;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="8" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#FFFFFF" filter="url(#shadow)"/>
+  
+  <!-- Main chat bubble (blue) -->
+  <path d="M 80 120 
+           Q 80 80 120 80 
+           L 320 80 
+           Q 360 80 360 120 
+           L 360 240 
+           Q 360 280 320 280 
+           L 180 280 
+           L 120 320 
+           Q 100 340 80 320 
+           L 80 280 
+           Q 80 240 80 200 
+           Z" 
+        fill="url(#blueGradient)" 
+        filter="url(#shadow)"/>
+  
+  <!-- Secondary chat bubble (green) -->
+  <path d="M 200 200 
+           Q 200 160 240 160 
+           L 400 160 
+           Q 440 160 440 200 
+           L 440 320 
+           Q 440 360 400 360 
+           L 280 360 
+           L 440 400 
+           Q 460 420 440 440 
+           L 400 400 
+           Q 360 400 320 400 
+           L 240 400 
+           Q 200 400 200 360 
+           Z" 
+        fill="url(#greenGradient)" 
+        filter="url(#shadow)"/>
+  
+  <!-- Chat dots in main bubble -->
+  <circle cx="160" cy="180" r="18" fill="#FFFFFF" opacity="0.9"/>
+  <circle cx="220" cy="180" r="18" fill="#FFFFFF" opacity="0.9"/>
+  <circle cx="280" cy="180" r="18" fill="#FFFFFF" opacity="0.9"/>
+  
+  <!-- Chat dots in secondary bubble -->
+  <circle cx="320" cy="280" r="14" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="370" cy="280" r="14" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="420" cy="280" r="14" fill="#FFFFFF" opacity="0.8"/>
+</svg>

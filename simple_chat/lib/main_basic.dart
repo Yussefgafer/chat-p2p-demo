@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,24 +28,22 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.chat,
-              size: 100,
-              color: Colors.blue,
+            Container(
+              width: 120,
+              height: 120,
+              child: SvgPicture.asset(
+                'assets/animations/chat_loading.svg',
+                width: 120,
+                height: 120,
+              ),
             ),
             SizedBox(height: 20),
             Text(
               'Chat P2P Demo',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Text(
-              'تطبيق دردشة لامركزي',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('تطبيق دردشة لامركزي', style: TextStyle(fontSize: 16)),
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
@@ -58,10 +57,7 @@ class MyHomePage extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               'نسخة تجريبية - Infinix Hot 50I',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),
@@ -81,10 +77,7 @@ class ChatListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('المحادثات'),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: AppBar(title: Text('المحادثات'), backgroundColor: Colors.blue),
       body: ListView.builder(
         itemCount: chats.length,
         itemBuilder: (context, index) {
