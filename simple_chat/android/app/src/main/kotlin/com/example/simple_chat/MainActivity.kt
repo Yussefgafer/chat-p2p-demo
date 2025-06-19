@@ -1,4 +1,4 @@
-package com.chatp2p.basic
+package com.hello.test
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -72,6 +72,15 @@ jobs:
 
     - name: Copy Infinix Safe APK
       run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-infinix.apk
+
+    - name: Build APK (Hello Test)
+      run: |
+        flutter clean
+        flutter pub get
+        flutter build apk --release --no-tree-shake-icons -t lib/main_hello.dart
+
+    - name: Copy Hello Test APK
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/hello-test.apk
       
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
@@ -106,6 +115,13 @@ jobs:
       with:
         name: chat-p2p-demo-infinix.apk
         path: build/app/outputs/flutter-apk/chat-p2p-demo-infinix.apk
+        retention-days: 30
+
+    - name: Upload Hello Test APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: hello-test.apk
+        path: build/app/outputs/flutter-apk/hello-test.apk
         retention-days: 30
         
     - name: Create Release
