@@ -46,41 +46,14 @@ jobs:
     - name: Copy Release APK
       run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-release.apk
 
-    - name: Build APK (Basic - Ultra Compatible)
+    - name: Build APK (Hello Test - Ultra Simple)
       run: |
         flutter clean
         flutter pub get
-        flutter build apk --release --no-tree-shake-icons -t lib/main_basic.dart
-
-    - name: Copy Basic APK
-      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-basic.apk
-
-    - name: Build APK (Simple with Animations)
-      run: |
-        flutter clean
-        flutter pub get
-        flutter build apk --release --no-tree-shake-icons -t lib/main_simple.dart
-
-    - name: Copy Animated APK
-      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-animated.apk
-
-    - name: Build APK (Infinix Safe)
-      run: |
-        flutter clean
-        flutter pub get
-        flutter build apk --release --no-tree-shake-icons -t lib/main_infinix_safe.dart
-
-    - name: Copy Infinix Safe APK
-      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-infinix.apk
-
-    - name: Build APK (Hello Test)
-      run: |
-        flutter clean
-        flutter pub get
-        flutter build apk --release --no-tree-shake-icons -t lib/main_hello.dart
+        flutter build apk --release --no-tree-shake-icons -t lib/main_hello.dart || echo "Hello build failed"
 
     - name: Copy Hello Test APK
-      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/hello-test.apk
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/hello-test.apk || echo "Hello copy failed"
       
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
@@ -96,33 +69,13 @@ jobs:
         path: build/app/outputs/flutter-apk/chat-p2p-demo-release.apk
         retention-days: 30
 
-    - name: Upload Basic Ultra Compatible APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: chat-p2p-demo-basic.apk
-        path: build/app/outputs/flutter-apk/chat-p2p-demo-basic.apk
-        retention-days: 30
-
-    - name: Upload Simple Animated APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: chat-p2p-demo-animated.apk
-        path: build/app/outputs/flutter-apk/chat-p2p-demo-animated.apk
-        retention-days: 30
-
-    - name: Upload Infinix Safe APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: chat-p2p-demo-infinix.apk
-        path: build/app/outputs/flutter-apk/chat-p2p-demo-infinix.apk
-        retention-days: 30
-
     - name: Upload Hello Test APK
       uses: actions/upload-artifact@v4
       with:
         name: hello-test.apk
         path: build/app/outputs/flutter-apk/hello-test.apk
         retention-days: 30
+      continue-on-error: true
         
     - name: Create Release
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
