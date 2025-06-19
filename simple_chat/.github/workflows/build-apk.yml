@@ -46,7 +46,16 @@ jobs:
     - name: Copy Release APK
       run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-release.apk
 
-    - name: Build APK (Hello Test - Ultra Simple)
+    - name: Build Ultra Simple APK
+      run: |
+        flutter clean
+        flutter pub get
+        flutter build apk --release --no-tree-shake-icons -t lib/main_ultra_simple.dart || echo "Ultra simple build failed"
+
+    - name: Copy Ultra Simple APK
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/ultra-simple.apk || echo "Ultra simple copy failed"
+
+    - name: Build Hello Test APK
       run: |
         flutter clean
         flutter pub get
@@ -54,6 +63,15 @@ jobs:
 
     - name: Copy Hello Test APK
       run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/hello-test.apk || echo "Hello copy failed"
+
+    - name: Build Infinix Minimal APK
+      run: |
+        flutter clean
+        flutter pub get
+        flutter build apk --release --no-tree-shake-icons -t lib/main_infinix_minimal.dart || echo "Infinix minimal build failed"
+
+    - name: Copy Infinix Minimal APK
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/infinix-minimal.apk || echo "Infinix minimal copy failed"
       
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
@@ -69,11 +87,27 @@ jobs:
         path: build/app/outputs/flutter-apk/chat-p2p-demo-release.apk
         retention-days: 30
 
+    - name: Upload Ultra Simple APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: ultra-simple.apk
+        path: build/app/outputs/flutter-apk/ultra-simple.apk
+        retention-days: 30
+      continue-on-error: true
+
     - name: Upload Hello Test APK
       uses: actions/upload-artifact@v4
       with:
         name: hello-test.apk
         path: build/app/outputs/flutter-apk/hello-test.apk
+        retention-days: 30
+      continue-on-error: true
+
+    - name: Upload Infinix Minimal APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: infinix-minimal.apk
+        path: build/app/outputs/flutter-apk/infinix-minimal.apk
         retention-days: 30
       continue-on-error: true
         

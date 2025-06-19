@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.hello.test"
-    compileSdk = 23
-    ndkVersion = flutter.ndkVersion
+    namespace = "com.chatp2p.demo"
+    compileSdk = 34
+    // ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -20,12 +20,12 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.hello.test"
-        minSdk = 16
-        targetSdk = 23
+        applicationId = "com.chatp2p.demo"
+        minSdk = 21
+        targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
+        multiDexEnabled = false
     }
 
     buildTypes {
@@ -39,6 +39,7 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
+            isShrinkResources = false
             isDebuggable = false
         }
     }
