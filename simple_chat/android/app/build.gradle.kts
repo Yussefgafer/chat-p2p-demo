@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.hello.test"
-    compileSdk = 28
+    compileSdk = 23
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -22,8 +22,8 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.hello.test"
-        minSdk = 19
-        targetSdk = 28
+        minSdk = 16
+        targetSdk = 23
         versionCode = 1
         versionName = "1.0"
     }
