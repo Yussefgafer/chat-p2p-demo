@@ -1,0 +1,141 @@
+name: Build All APK Versions
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-hello:
+    name: Build Hello Test APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.32.4'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build Hello Test APK
+      run: flutter build apk --release --no-tree-shake-icons -t lib/main_hello.dart
+      
+    - name: Upload Hello Test APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: hello-test.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+
+  build-basic:
+    name: Build Basic APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.32.4'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build Basic APK
+      run: flutter build apk --release --no-tree-shake-icons -t lib/main_basic.dart
+      
+    - name: Upload Basic APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: chat-p2p-demo-basic.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+
+  build-infinix:
+    name: Build Infinix Safe APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.32.4'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build Infinix Safe APK
+      run: flutter build apk --release --no-tree-shake-icons -t lib/main_infinix_safe.dart
+      
+    - name: Upload Infinix Safe APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: chat-p2p-demo-infinix.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+
+  build-animated:
+    name: Build Animated APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.32.4'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build Animated APK
+      run: flutter build apk --release --no-tree-shake-icons -t lib/main_simple.dart
+      
+    - name: Upload Animated APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: chat-p2p-demo-animated.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
