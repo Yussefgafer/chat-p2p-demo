@@ -37,51 +37,75 @@ jobs:
     - name: Build APK (Debug)
       run: flutter build apk --debug --no-tree-shake-icons
 
+    - name: Copy Debug APK
+      run: cp build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/chat-p2p-demo-debug.apk
+
     - name: Build APK (Release)
       run: flutter build apk --release --no-tree-shake-icons
 
-    - name: Build APK (Infinix Optimized)
-      run: flutter build apk --release --no-tree-shake-icons -t lib/main_infinix.dart
+    - name: Copy Release APK
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-release.apk
 
     - name: Build APK (Basic - Ultra Compatible)
-      run: flutter build apk --release --no-tree-shake-icons -t lib/main_basic.dart
+      run: |
+        flutter clean
+        flutter pub get
+        flutter build apk --release --no-tree-shake-icons -t lib/main_basic.dart
+
+    - name: Copy Basic APK
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-basic.apk
 
     - name: Build APK (Simple with Animations)
-      run: flutter build apk --release --no-tree-shake-icons -t lib/main_simple.dart
+      run: |
+        flutter clean
+        flutter pub get
+        flutter build apk --release --no-tree-shake-icons -t lib/main_simple.dart
+
+    - name: Copy Animated APK
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-animated.apk
+
+    - name: Build APK (Infinix Safe)
+      run: |
+        flutter clean
+        flutter pub get
+        flutter build apk --release --no-tree-shake-icons -t lib/main_infinix_safe.dart
+
+    - name: Copy Infinix Safe APK
+      run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/chat-p2p-demo-infinix.apk
       
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-debug.apk
-        path: build/app/outputs/flutter-apk/app-debug.apk
+        path: build/app/outputs/flutter-apk/chat-p2p-demo-debug.apk
         retention-days: 30
-        
+
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-release.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
-        retention-days: 30
-
-    - name: Upload Infinix Optimized APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: chat-p2p-demo-infinix.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: build/app/outputs/flutter-apk/chat-p2p-demo-release.apk
         retention-days: 30
 
     - name: Upload Basic Ultra Compatible APK
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-basic.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: build/app/outputs/flutter-apk/chat-p2p-demo-basic.apk
         retention-days: 30
 
     - name: Upload Simple Animated APK
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-animated.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: build/app/outputs/flutter-apk/chat-p2p-demo-animated.apk
+        retention-days: 30
+
+    - name: Upload Infinix Safe APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: chat-p2p-demo-infinix.apk
+        path: build/app/outputs/flutter-apk/chat-p2p-demo-infinix.apk
         retention-days: 30
         
     - name: Create Release
