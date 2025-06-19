@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    namespace = "com.chatp2p.demo"
-    compileSdk = 33
+    namespace = "com.chatp2p.basic"
+    compileSdk = 30
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -21,19 +21,14 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.chatp2p.demo"
+        applicationId = "com.chatp2p.basic"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
-        targetSdk = 33
-        compileSdk = 33
+        minSdk = 21
+        targetSdk = 30
         versionCode = 1
         versionName = "1.0.0"
-        multiDexEnabled = true
-
-        ndk {
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
-        }
+        multiDexEnabled = false
     }
 
     buildTypes {

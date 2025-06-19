@@ -42,6 +42,9 @@ jobs:
 
     - name: Build APK (Infinix Optimized)
       run: flutter build apk --release --no-tree-shake-icons -t lib/main_infinix.dart
+
+    - name: Build APK (Basic - Ultra Compatible)
+      run: flutter build apk --release --no-tree-shake-icons -t lib/main_basic.dart
       
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
@@ -61,6 +64,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-infinix.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+
+    - name: Upload Basic Ultra Compatible APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: chat-p2p-demo-basic.apk
         path: build/app/outputs/flutter-apk/app-release.apk
         retention-days: 30
         
