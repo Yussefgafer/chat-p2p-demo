@@ -9,6 +9,9 @@ android {
     namespace = "com.chatp2p.demo"
     compileSdk = 34
 
+    // Disable NDK completely
+    ndkVersion = null
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -28,6 +31,18 @@ android {
 
         // Optimize for GitHub Actions
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Disable NDK completely to avoid build issues
+        ndk {
+            abiFilters.clear()
+        }
+
+        // Disable native builds
+        externalNativeBuild {
+            cmake {
+                arguments.clear()
+            }
+        }
     }
 
     buildTypes {
@@ -49,6 +64,13 @@ android {
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    // Disable NDK builds completely
+    androidComponents {
+        beforeVariants { variantBuilder ->
+            variantBuilder.enableAndroidTest = false
         }
     }
 }

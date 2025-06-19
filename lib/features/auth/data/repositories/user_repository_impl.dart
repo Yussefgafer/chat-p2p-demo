@@ -1,4 +1,5 @@
-import 'package:dartz/dartz.dart';
+// import 'package:dartz/dartz.dart'; // Commented out for demo
+import '../../../../core/utils/either.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/utils/uuid_generator.dart';
@@ -43,7 +44,7 @@ class UserRepositoryImpl implements UserRepository {
       // Generate key pair for encryption
       final keyPairResult = await generateKeyPair();
       String? publicKey;
-      
+
       keyPairResult.fold(
         (failure) => publicKey = null,
         (keyPair) => publicKey = keyPair['publicKey'],
@@ -106,7 +107,9 @@ class UserRepositoryImpl implements UserRepository {
       final exists = await localDataSource.userExists();
       return Right(exists);
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to check user existence: $e'));
+      return Left(
+        UnknownFailure(message: 'Failed to check user existence: $e'),
+      );
     }
   }
 
@@ -142,7 +145,9 @@ class UserRepositoryImpl implements UserRepository {
     } on StorageException catch (e) {
       return Left(StorageFailure(message: e.message));
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to load user from local: $e'));
+      return Left(
+        UnknownFailure(message: 'Failed to load user from local: $e'),
+      );
     }
   }
 
@@ -156,16 +161,16 @@ class UserRepositoryImpl implements UserRepository {
     try {
       // Generate encryption key pair
       final key = EncryptionHelper.generateKey();
-      final salt = EncryptionHelper.generateSalt();
-      
+      final salt = EncryptionHelper.generateIV(); // Using IV as salt for demo
+
       // For now, we'll use the key as both public and private
       // In a real implementation, you'd use proper asymmetric encryption
       final keyPair = {
-        'publicKey': key.base64,
-        'privateKey': key.base64,
+        'publicKey': key, // key is already a string in our demo implementation
+        'privateKey': key, // key is already a string in our demo implementation
         'salt': salt,
       };
-      
+
       return Right(keyPair);
     } on CryptographyException catch (e) {
       return Left(CryptographyFailure(message: e.message));
@@ -175,30 +180,32 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateOnlineStatus(String userId, bool isOnline) async {
+  Future<Either<Failure, void>> updateOnlineStatus(
+    String userId,
+    bool isOnline,
+  ) async {
     try {
       final userResult = await getUserById(userId);
-      return userResult.fold(
-        (failure) => Left(failure),
-        (user) async {
-          if (user == null) {
-            return const Left(DatabaseFailure(message: 'User not found'));
-          }
-          
-          final updatedUser = user.copyWith(
-            isOnline: isOnline,
-            lastSeen: isOnline ? null : DateTime.now(),
-          );
-          
-          final updateResult = await updateUser(updatedUser);
-          return updateResult.fold(
-            (failure) => Left(failure),
-            (_) => const Right(null),
-          );
-        },
-      );
+      return userResult.fold((failure) => Left(failure), (user) async {
+        if (user == null) {
+          return const Left(DatabaseFailure(message: 'User not found'));
+        }
+
+        final updatedUser = user.copyWith(
+          isOnline: isOnline,
+          lastSeen: isOnline ? null : DateTime.now(),
+        );
+
+        final updateResult = await updateUser(updatedUser);
+        return updateResult.fold(
+          (failure) => Left(failure),
+          (_) => const Right(null),
+        );
+      });
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to update online status: $e'));
+      return Left(
+        UnknownFailure(message: 'Failed to update online status: $e'),
+      );
     }
   }
 

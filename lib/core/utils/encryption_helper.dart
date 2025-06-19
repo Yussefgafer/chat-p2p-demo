@@ -1,124 +1,158 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:crypto/crypto.dart';
-import 'package:encrypt/encrypt.dart';
-import 'package:pointycastle/export.dart';
 
-/// Helper class for encryption and decryption operations
+/// Demo encryption helper - simplified version for demo purposes
+/// In production, use proper encryption libraries like crypto, encrypt, pointycastle
 class EncryptionHelper {
-  static final _secureRandom = SecureRandom('Fortuna')
-    ..seed(KeyParameter(Uint8List.fromList(
-        List.generate(32, (i) => Random.secure().nextInt(256)))));
-  
-  /// Generate a secure random key
-  static Key generateKey() {
-    final keyBytes = _secureRandom.nextBytes(32); // 256-bit key
-    return Key(keyBytes);
+  static final _random = Random.secure();
+
+  /// Generate a secure random key (demo version)
+  static String generateKey() {
+    final keyBytes = List.generate(32, (i) => _random.nextInt(256));
+    return base64Encode(keyBytes);
   }
-  
-  /// Generate a secure random IV
-  static IV generateIV() {
-    final ivBytes = _secureRandom.nextBytes(16); // 128-bit IV
-    return IV(ivBytes);
+
+  /// Generate a secure random IV (demo version)
+  static String generateIV() {
+    final ivBytes = List.generate(16, (i) => _random.nextInt(256));
+    return base64Encode(ivBytes);
   }
-  
-  /// Encrypt text using AES-GCM
-  static EncryptedData encryptText(String plainText, Key key) {
-    final encrypter = Encrypter(AES(key, mode: AESMode.gcm));
+
+  /// Encrypt text using simple XOR (demo version - NOT secure for production)
+  static EncryptedData encryptText(String plainText, String key) {
+    final keyBytes = base64Decode(key);
+    final plainBytes = utf8.encode(plainText);
     final iv = generateIV();
-    final encrypted = encrypter.encrypt(plainText, iv: iv);
-    
+
+    // Simple XOR encryption (demo only)
+    final encryptedBytes = <int>[];
+    for (int i = 0; i < plainBytes.length; i++) {
+      encryptedBytes.add(plainBytes[i] ^ keyBytes[i % keyBytes.length]);
+    }
+
     return EncryptedData(
-      encryptedText: encrypted.base64,
-      iv: iv.base64,
-      key: key.base64,
+      encryptedText: base64Encode(encryptedBytes),
+      key: key,
+      iv: iv,
     );
   }
-  
-  /// Decrypt text using AES-GCM
+
+  /// Decrypt text (demo version)
   static String decryptText(EncryptedData encryptedData) {
-    final key = Key.fromBase64(encryptedData.key);
-    final iv = IV.fromBase64(encryptedData.iv);
-    final encrypted = Encrypted.fromBase64(encryptedData.encryptedText);
-    
-    final encrypter = Encrypter(AES(key, mode: AESMode.gcm));
-    return encrypter.decrypt(encrypted, iv: iv);
+    final keyBytes = base64Decode(encryptedData.key);
+    final encryptedBytes = base64Decode(encryptedData.encryptedText);
+
+    // Simple XOR decryption (demo only)
+    final decryptedBytes = <int>[];
+    for (int i = 0; i < encryptedBytes.length; i++) {
+      decryptedBytes.add(encryptedBytes[i] ^ keyBytes[i % keyBytes.length]);
+    }
+
+    return utf8.decode(decryptedBytes);
   }
-  
-  /// Encrypt file data
-  static EncryptedData encryptFileData(Uint8List fileData, Key key) {
-    final encrypter = Encrypter(AES(key, mode: AESMode.gcm));
+
+  /// Encrypt file data (demo version)
+  static EncryptedData encryptFileData(Uint8List fileData, String key) {
+    final keyBytes = base64Decode(key);
     final iv = generateIV();
-    final encrypted = encrypter.encryptBytes(fileData, iv: iv);
-    
+
+    // Simple XOR encryption (demo only)
+    final encryptedBytes = <int>[];
+    for (int i = 0; i < fileData.length; i++) {
+      encryptedBytes.add(fileData[i] ^ keyBytes[i % keyBytes.length]);
+    }
+
     return EncryptedData(
-      encryptedText: encrypted.base64,
-      iv: iv.base64,
-      key: key.base64,
+      encryptedText: base64Encode(encryptedBytes),
+      key: key,
+      iv: iv,
     );
   }
-  
-  /// Decrypt file data
+
+  /// Decrypt file data (demo version)
   static Uint8List decryptFileData(EncryptedData encryptedData) {
-    final key = Key.fromBase64(encryptedData.key);
-    final iv = IV.fromBase64(encryptedData.iv);
-    final encrypted = Encrypted.fromBase64(encryptedData.encryptedText);
-    
-    final encrypter = Encrypter(AES(key, mode: AESMode.gcm));
-    return Uint8List.fromList(encrypter.decryptBytes(encrypted, iv: iv));
+    final keyBytes = base64Decode(encryptedData.key);
+    final encryptedBytes = base64Decode(encryptedData.encryptedText);
+
+    // Simple XOR decryption (demo only)
+    final decryptedBytes = <int>[];
+    for (int i = 0; i < encryptedBytes.length; i++) {
+      decryptedBytes.add(encryptedBytes[i] ^ keyBytes[i % keyBytes.length]);
+    }
+
+    return Uint8List.fromList(decryptedBytes);
   }
-  
-  /// Generate hash for data integrity
+
+  /// Generate hash of data (demo version)
   static String generateHash(String data) {
+    // Simple hash function (demo only - use proper crypto in production)
     final bytes = utf8.encode(data);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
+    int hash = 0;
+    for (int byte in bytes) {
+      hash = ((hash << 5) - hash + byte) & 0xFFFFFFFF;
+    }
+    return hash.toRadixString(16);
   }
-  
+
   /// Verify hash
   static bool verifyHash(String data, String hash) {
     return generateHash(data) == hash;
   }
-  
-  /// Generate key from password using PBKDF2
-  static Key deriveKeyFromPassword(String password, String salt) {
-    final saltBytes = utf8.encode(salt);
-    final pbkdf2 = PBKDF2KeyDerivator(HMac(SHA256Digest(), 64));
-    pbkdf2.init(Pbkdf2Parameters(saltBytes, 10000, 32));
-    
-    final keyBytes = pbkdf2.process(utf8.encode(password));
-    return Key(keyBytes);
-  }
-  
-  /// Generate a secure salt
-  static String generateSalt() {
-    final saltBytes = _secureRandom.nextBytes(16);
-    return base64.encode(saltBytes);
+
+  /// Generate key from password (demo version)
+  static String deriveKeyFromPassword(String password, String salt) {
+    // Simple key derivation (demo only - use PBKDF2 in production)
+    final combined = password + salt;
+    final bytes = utf8.encode(combined);
+    final keyBytes = List.generate(
+      32,
+      (i) => bytes[i % bytes.length] ^ (i + 1),
+    );
+    return base64Encode(keyBytes);
   }
 }
 
 /// Data class for encrypted content
 class EncryptedData {
   final String encryptedText;
-  final String iv;
   final String key;
-  
+  final String iv;
+
   const EncryptedData({
     required this.encryptedText,
-    required this.iv,
     required this.key,
+    required this.iv,
   });
-  
-  Map<String, dynamic> toJson() => {
-    'encryptedText': encryptedText,
-    'iv': iv,
-    'key': key,
-  };
-  
-  factory EncryptedData.fromJson(Map<String, dynamic> json) => EncryptedData(
-    encryptedText: json['encryptedText'],
-    iv: json['iv'],
-    key: json['key'],
-  );
+
+  Map<String, dynamic> toJson() {
+    return {'encryptedText': encryptedText, 'key': key, 'iv': iv};
+  }
+
+  factory EncryptedData.fromJson(Map<String, dynamic> json) {
+    return EncryptedData(
+      encryptedText: json['encryptedText'] as String,
+      key: json['key'] as String,
+      iv: json['iv'] as String,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'EncryptedData(encryptedText: ${encryptedText.substring(0, 10)}..., key: ${key.substring(0, 10)}..., iv: ${iv.substring(0, 10)}...)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is EncryptedData &&
+        other.encryptedText == encryptedText &&
+        other.key == key &&
+        other.iv == iv;
+  }
+
+  @override
+  int get hashCode {
+    return encryptedText.hashCode ^ key.hashCode ^ iv.hashCode;
+  }
 }

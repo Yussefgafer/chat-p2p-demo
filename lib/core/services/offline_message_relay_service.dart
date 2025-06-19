@@ -12,7 +12,7 @@ class OfflineMessageRelayService {
   final Database database;
   bool _isRelayEnabled = false;
   final Duration _messageExpiryDuration = const Duration(days: 7);
-  
+
   Timer? _cleanupTimer;
   final StreamController<RelayMessage> _relayMessageController =
       StreamController<RelayMessage>.broadcast();
@@ -48,7 +48,7 @@ class OfflineMessageRelayService {
     try {
       // Encrypt message content for relay
       final encryptedContent = await _encryptMessageForRelay(message);
-      
+
       final relayMessage = RelayMessage(
         id: UuidGenerator.generateV4(),
         originalMessageId: message.id,
@@ -71,7 +71,8 @@ class OfflineMessageRelayService {
     try {
       final List<Map<String, dynamic>> maps = await database.query(
         'offline_messages',
-        where: 'target_user_id = ? AND is_delivered = 0 AND expiry_timestamp > ?',
+        where:
+            'target_user_id = ? AND is_delivered = 0 AND expiry_timestamp > ?',
         whereArgs: [userId, DateTime.now().millisecondsSinceEpoch],
         orderBy: 'timestamp ASC',
       );
@@ -92,17 +93,23 @@ class OfflineMessageRelayService {
         whereArgs: [relayMessageId],
       );
     } catch (e) {
-      throw DatabaseException(message: 'Failed to mark message as delivered: $e');
+      throw DatabaseException(
+        message: 'Failed to mark message as delivered: $e',
+      );
     }
   }
 
   /// Decrypt relay message
   Future<MessageModel> decryptRelayMessage(RelayMessage relayMessage) async {
     try {
-      final decryptedContent = await _decryptMessageFromRelay(relayMessage.encryptedContent);
+      final decryptedContent = await _decryptMessageFromRelay(
+        relayMessage.encryptedContent,
+      );
       return MessageModel.fromJson(json.decode(decryptedContent));
     } catch (e) {
-      throw CryptographyException(message: 'Failed to decrypt relay message: $e');
+      throw CryptographyException(
+        message: 'Failed to decrypt relay message: $e',
+      );
     }
   }
 
@@ -112,11 +119,11 @@ class OfflineMessageRelayService {
       final totalMessages = await database.rawQuery(
         'SELECT COUNT(*) as count FROM offline_messages',
       );
-      
+
       final deliveredMessages = await database.rawQuery(
         'SELECT COUNT(*) as count FROM offline_messages WHERE is_delivered = 1',
       );
-      
+
       final expiredMessages = await database.rawQuery(
         'SELECT COUNT(*) as count FROM offline_messages WHERE expiry_timestamp < ?',
         [DateTime.now().millisecondsSinceEpoch],
@@ -126,9 +133,10 @@ class OfflineMessageRelayService {
         'totalMessages': totalMessages.first['count'],
         'deliveredMessages': deliveredMessages.first['count'],
         'expiredMessages': expiredMessages.first['count'],
-        'pendingMessages': (totalMessages.first['count'] as int) - 
-                          (deliveredMessages.first['count'] as int) - 
-                          (expiredMessages.first['count'] as int),
+        'pendingMessages':
+            (totalMessages.first['count'] as int) -
+            (deliveredMessages.first['count'] as int) -
+            (expiredMessages.first['count'] as int),
       };
     } catch (e) {
       throw DatabaseException(message: 'Failed to get relay statistics: $e');
@@ -148,12 +156,14 @@ class OfflineMessageRelayService {
         where: 'expiry_timestamp < ?',
         whereArgs: [DateTime.now().millisecondsSinceEpoch],
       );
-      
+
       if (expiredCount > 0) {
         print('Cleaned up $expiredCount expired relay messages');
       }
     } catch (e) {
-      throw DatabaseException(message: 'Failed to cleanup expired messages: $e');
+      throw DatabaseException(
+        message: 'Failed to cleanup expired messages: $e',
+      );
     }
   }
 
@@ -183,7 +193,7 @@ class OfflineMessageRelayService {
 
       await _saveRelayMessage(relayMessage);
       _relayMessageController.add(relayMessage);
-      
+
       return true;
     } catch (e) {
       return false;
@@ -197,7 +207,7 @@ class OfflineMessageRelayService {
         'SELECT COUNT(*) as count FROM offline_messages WHERE target_user_id = ? AND is_delivered = 0 AND expiry_timestamp > ?',
         [userId, DateTime.now().millisecondsSinceEpoch],
       );
-      
+
       return result.first['count'] as int;
     } catch (e) {
       return 0;
@@ -209,13 +219,15 @@ class OfflineMessageRelayService {
       final messageJson = json.encode(message.toJson());
       final key = EncryptionHelper.generateKey();
       final encryptedData = EncryptionHelper.encryptText(messageJson, key);
-      
+
       return json.encode({
         'data': encryptedData.toJson(),
-        'key': key.base64,
+        'key': key, // key is already a string in our demo implementation
       });
     } catch (e) {
-      throw CryptographyException(message: 'Failed to encrypt message for relay: $e');
+      throw CryptographyException(
+        message: 'Failed to encrypt message for relay: $e',
+      );
     }
   }
 
@@ -223,10 +235,12 @@ class OfflineMessageRelayService {
     try {
       final contentData = json.decode(encryptedContent);
       final encryptedData = EncryptedData.fromJson(contentData['data']);
-      
+
       return EncryptionHelper.decryptText(encryptedData);
     } catch (e) {
-      throw CryptographyException(message: 'Failed to decrypt message from relay: $e');
+      throw CryptographyException(
+        message: 'Failed to decrypt message from relay: $e',
+      );
     }
   }
 
@@ -235,22 +249,21 @@ class OfflineMessageRelayService {
   }
 
   Future<void> _saveRelayPreference(bool enabled) async {
-    await database.insert(
-      'settings',
-      {
-        'key': 'offline_relay_enabled',
-        'value': enabled.toString(),
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await database.insert('settings', {
+      'key': 'offline_relay_enabled',
+      'value': enabled.toString(),
+      'updated_at': DateTime.now().millisecondsSinceEpoch,
+    }); // conflictAlgorithm removed for demo
   }
 
   Future<void> _clearAllRelayMessages() async {
     await database.delete('offline_messages');
   }
 
-  Future<bool> _verifyRelayRequest(String fromUserId, String targetUserId) async {
+  Future<bool> _verifyRelayRequest(
+    String fromUserId,
+    String targetUserId,
+  ) async {
     // Implement verification logic
     // Check if users are known, not blocked, etc.
     return true;
@@ -298,7 +311,9 @@ class RelayMessage {
       relayUserId: map['relay_user_id'],
       encryptedContent: map['encrypted_content'],
       timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp']),
-      expiryTimestamp: DateTime.fromMillisecondsSinceEpoch(map['expiry_timestamp']),
+      expiryTimestamp: DateTime.fromMillisecondsSinceEpoch(
+        map['expiry_timestamp'],
+      ),
       isDelivered: map['is_delivered'] == 1,
     );
   }
@@ -317,6 +332,6 @@ class RelayMessage {
   }
 
   bool get isExpired => DateTime.now().isAfter(expiryTimestamp);
-  
+
   Duration get timeUntilExpiry => expiryTimestamp.difference(DateTime.now());
 }

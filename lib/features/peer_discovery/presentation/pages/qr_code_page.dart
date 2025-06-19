@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:share_plus/share_plus.dart';
+// TODO: Add QR dependencies when needed
+// import 'package:qr_flutter/qr_flutter.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
+// import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/app_constants.dart';
 
 class QRCodePage extends StatefulWidget {
@@ -15,13 +16,13 @@ class QRCodePage extends StatefulWidget {
 class _QRCodePageState extends State<QRCodePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
-  // QR Code Generation
+
+  // QR Code Generation (demo version)
   String _qrData = '';
   bool _isGenerating = false;
-  
-  // QR Code Scanning
-  QRViewController? _qrController;
+
+  // QR Code Scanning (demo version - disabled)
+  // QRViewController? _qrController;
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
   bool _isScanning = false;
   String? _scannedData;
@@ -36,22 +37,24 @@ class _QRCodePageState extends State<QRCodePage>
   @override
   void dispose() {
     _tabController.dispose();
-    _qrController?.dispose();
+    // _qrController?.dispose(); // Commented out for demo
     super.dispose();
   }
 
   Future<void> _generateQRCode() async {
     setState(() => _isGenerating = true);
-    
+
     try {
       // TODO: Get actual user data and generate QR code
       final userData = {
         'userId': 'user_123',
         'userName': 'Test User',
         'timestamp': DateTime.now().millisecondsSinceEpoch,
-        'expires': DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch,
+        'expires': DateTime.now()
+            .add(const Duration(hours: 1))
+            .millisecondsSinceEpoch,
       };
-      
+
       setState(() {
         _qrData = userData.toString();
         _isGenerating = false;
@@ -66,14 +69,22 @@ class _QRCodePageState extends State<QRCodePage>
     }
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    _qrController = controller;
-    controller.scannedDataStream.listen((scanData) {
-      if (!_isScanning) {
-        _isScanning = true;
-        _handleScannedData(scanData.code);
-      }
-    });
+  // Demo version - QR scanning disabled
+  void _onQRViewCreated(dynamic controller) {
+    // _qrController = controller;
+    // controller.scannedDataStream.listen((scanData) {
+    //   if (!_isScanning) {
+    //     _isScanning = true;
+    //     _handleScannedData(scanData.code);
+    //   }
+    // });
+
+    // Demo: Show a message that QR scanning is not available
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('QR scanning not available in demo version'),
+      ),
+    );
   }
 
   void _handleScannedData(String? data) {
@@ -82,7 +93,7 @@ class _QRCodePageState extends State<QRCodePage>
         _scannedData = data;
         _isScanning = false;
       });
-      
+
       _showScannedDataDialog(data);
     }
   }
@@ -106,9 +117,9 @@ class _QRCodePageState extends State<QRCodePage>
               ),
               child: Text(
                 data,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
               ),
             ),
           ],
@@ -135,15 +146,15 @@ class _QRCodePageState extends State<QRCodePage>
 
   void _connectToPeer(String data) {
     // TODO: Implement peer connection logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Connecting to peer...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Connecting to peer...')));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Code'),
@@ -157,10 +168,7 @@ class _QRCodePageState extends State<QRCodePage>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildShareTab(theme),
-          _buildScanTab(theme),
-        ],
+        children: [_buildShareTab(theme), _buildScanTab(theme)],
       ),
     );
   }
@@ -171,7 +179,7 @@ class _QRCodePageState extends State<QRCodePage>
       child: Column(
         children: [
           const SizedBox(height: 32),
-          
+
           // Header
           Text(
             'Share Your QR Code',
@@ -180,9 +188,9 @@ class _QRCodePageState extends State<QRCodePage>
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             'Others can scan this code to connect with you',
             style: theme.textTheme.bodyLarge?.copyWith(
@@ -190,9 +198,9 @@ class _QRCodePageState extends State<QRCodePage>
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: 48),
-          
+
           // QR Code
           if (_isGenerating)
             const CircularProgressIndicator()
@@ -210,17 +218,43 @@ class _QRCodePageState extends State<QRCodePage>
                   ),
                 ],
               ),
-              child: QrImageView(
-                data: _qrData,
-                version: QrVersions.auto,
-                size: 250,
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.qr_code, size: 100, color: Colors.black),
+                      const SizedBox(height: 16),
+                      Text(
+                        'QR Code Demo',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _qrData.isNotEmpty
+                            ? 'Data: ${_qrData.substring(0, 20)}...'
+                            : 'No data',
+                        style: TextStyle(color: Colors.black54, fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Action Buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -245,9 +279,9 @@ class _QRCodePageState extends State<QRCodePage>
               ),
             ],
           ),
-          
+
           const Spacer(),
-          
+
           // Expiration Info
           Container(
             padding: const EdgeInsets.all(16),
@@ -257,10 +291,7 @@ class _QRCodePageState extends State<QRCodePage>
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.info_outline, color: theme.colorScheme.primary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -281,19 +312,41 @@ class _QRCodePageState extends State<QRCodePage>
       children: [
         Expanded(
           flex: 4,
-          child: QRView(
-            key: _qrKey,
-            onQRViewCreated: _onQRViewCreated,
-            overlay: QrScannerOverlayShape(
-              borderColor: theme.colorScheme.primary,
-              borderRadius: 16,
-              borderLength: 30,
-              borderWidth: 4,
-              cutOutSize: 250,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.qr_code_scanner,
+                    size: 100,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'QR Scanner Demo',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Camera scanning not available in demo',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-        
+
         Expanded(
           flex: 1,
           child: Container(
@@ -316,7 +369,7 @@ class _QRCodePageState extends State<QRCodePage>
                   ),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 if (_scannedData != null) ...[
                   const SizedBox(height: 16),
                   Text(
@@ -352,19 +405,28 @@ class _QRCodePageState extends State<QRCodePage>
           child: Icon(icon, size: 24),
         ),
         const SizedBox(height: 8),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall,
-        ),
+        Text(label, style: theme.textTheme.bodySmall),
       ],
     );
   }
 
   void _shareQRCode() {
     if (_qrData.isNotEmpty) {
-      Share.share(
-        'Connect with me on Chat P2P: $_qrData',
-        subject: 'Chat P2P Connection',
+      // Demo version - sharing disabled
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Demo: Would share QR code data: ${_qrData.substring(0, 30)}...',
+          ),
+          backgroundColor: Colors.blue,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Generate a QR code first'),
+          backgroundColor: Colors.orange,
+        ),
       );
     }
   }

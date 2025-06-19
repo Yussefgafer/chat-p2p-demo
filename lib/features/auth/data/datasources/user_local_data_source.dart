@@ -88,10 +88,10 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
         id: UuidGenerator.generateUserId(),
         name: name,
         avatar: avatar,
+        publicKey: '', // Will be set later
+        lastSeen: now,
         createdAt: now,
         updatedAt: now,
-        age: age,
-        phoneNumber: phoneNumber,
       );
 
       // Save to database
@@ -210,7 +210,9 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
       }
       return null;
     } catch (e) {
-      throw StorageException(message: 'Failed to load user from preferences: $e');
+      throw StorageException(
+        message: 'Failed to load user from preferences: $e',
+      );
     }
   }
 
@@ -230,7 +232,7 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
       await database.insert(
         'users',
         user.toDatabase(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
+        // conflictAlgorithm: ConflictAlgorithm.replace, // Commented out for demo
       );
 
       // Also save to Hive

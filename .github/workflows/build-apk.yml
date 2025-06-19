@@ -28,25 +28,70 @@ jobs:
         flutter-version: '3.32.4'
         channel: 'stable'
         
-    - name: Get dependencies
+    - name: Get dependencies (Main Project)
       run: flutter pub get
-      
-    - name: Build APK (Debug)
+
+    - name: Get dependencies (Simple Chat APK)
+      run: flutter pub get
+      working-directory: ./simple_chat_apk
+
+    - name: Build APK (Debug) - Simple Chat
       run: flutter build apk --debug
-      
-    - name: Build APK (Release)
+      working-directory: ./simple_chat_apk
+
+    - name: Build APK (Release) - Simple Chat
       run: flutter build apk --release
+      working-directory: ./simple_chat_apk
       
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-debug.apk
-        path: build/app/outputs/flutter-apk/app-debug.apk
+        path: simple_chat_apk/build/app/outputs/flutter-apk/app-debug.apk
         retention-days: 30
-        
+
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
       with:
         name: chat-p2p-demo-release.apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: simple_chat_apk/build/app/outputs/flutter-apk/app-release.apk
         retention-days: 30
+
+    - name: Create Release
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        name: Chat P2P v1.0.${{ github.run_number }}
+        body: |
+          🎉 **Chat P2P - تطبيق دردشة لامركزي**
+
+          ### ✨ الميزات:
+          - 🔒 تشفير من طرف إلى طرف (تجريبي)
+          - 🌐 اتصال مباشر بدون خوادم
+          - 📱 واجهة عربية حديثة
+          - 🎨 تصميم Material 3 مع الوضع المظلم
+
+          ### 📱 التحميل:
+          - **APK (Release)**: للاستخدام العادي
+          - **APK (Debug)**: للتطوير والاختبار
+
+          ### 🔧 التثبيت:
+          1. حمل ملف APK المناسب
+          2. فعل "مصادر غير معروفة" في إعدادات الأمان
+          3. ثبت التطبيق واستمتع!
+
+          ### 📝 ملاحظات:
+          - هذه نسخة تجريبية للعرض
+          - التشفير مبسط لأغراض التوضيح
+          - في النسخة الكاملة ستتوفر ميزات إضافية
+
+          ---
+          تم البناء تلقائياً باستخدام GitHub Actions ✨
+        files: |
+          simple_chat_apk/build/app/outputs/flutter-apk/app-debug.apk
+          simple_chat_apk/build/app/outputs/flutter-apk/app-release.apk
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

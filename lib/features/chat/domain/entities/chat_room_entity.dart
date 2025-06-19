@@ -42,23 +42,23 @@ class ChatRoomEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        participantIds,
-        participants,
-        lastMessage,
-        createdAt,
-        updatedAt,
-        isGroup,
-        avatar,
-        metadata,
-        isEncrypted,
-        encryptionKey,
-        unreadCount,
-        isMuted,
-        isPinned,
-        status,
-      ];
+    id,
+    name,
+    participantIds,
+    participants,
+    lastMessage,
+    createdAt,
+    updatedAt,
+    isGroup,
+    avatar,
+    metadata,
+    isEncrypted,
+    encryptionKey,
+    unreadCount,
+    isMuted,
+    isPinned,
+    status,
+  ];
 
   ChatRoomEntity copyWith({
     String? id,
@@ -106,11 +106,13 @@ class ChatRoomEntity extends Equatable {
       // For direct chats, show the other participant's name
       final otherParticipant = participants.firstWhere(
         (p) => p.id != currentUserId,
-        orElse: () => const UserModel(
+        orElse: () => UserModel(
           id: '',
           name: 'Unknown User',
-          createdAt: null,
-          updatedAt: null,
+          publicKey: '',
+          lastSeen: DateTime.now(),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         ),
       );
       return otherParticipant.name;
@@ -125,11 +127,13 @@ class ChatRoomEntity extends Equatable {
       // For direct chats, show the other participant's avatar
       final otherParticipant = participants.firstWhere(
         (p) => p.id != currentUserId,
-        orElse: () => const UserModel(
+        orElse: () => UserModel(
           id: '',
           name: 'Unknown User',
-          createdAt: null,
-          updatedAt: null,
+          publicKey: '',
+          lastSeen: DateTime.now(),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         ),
       );
       return otherParticipant.avatar;
@@ -139,14 +143,16 @@ class ChatRoomEntity extends Equatable {
   /// Check if user is online (for direct chats)
   bool isOtherUserOnline(String currentUserId) {
     if (isGroup) return false;
-    
+
     final otherParticipant = participants.firstWhere(
       (p) => p.id != currentUserId,
-      orElse: () => const UserModel(
+      orElse: () => UserModel(
         id: '',
         name: 'Unknown User',
-        createdAt: null,
-        updatedAt: null,
+        publicKey: '',
+        lastSeen: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ),
     );
     return otherParticipant.isOnline;
@@ -155,14 +161,16 @@ class ChatRoomEntity extends Equatable {
   /// Get last seen time for other user (for direct chats)
   DateTime? getOtherUserLastSeen(String currentUserId) {
     if (isGroup) return null;
-    
+
     final otherParticipant = participants.firstWhere(
       (p) => p.id != currentUserId,
-      orElse: () => const UserModel(
+      orElse: () => UserModel(
         id: '',
         name: 'Unknown User',
-        createdAt: null,
-        updatedAt: null,
+        publicKey: '',
+        lastSeen: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ),
     );
     return otherParticipant.lastSeen;
@@ -188,9 +196,4 @@ class ChatRoomEntity extends Equatable {
 }
 
 /// Enum for chat room status
-enum ChatRoomStatus {
-  active,
-  archived,
-  blocked,
-  deleted,
-}
+enum ChatRoomStatus { active, archived, blocked, deleted }
