@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    namespace = "com.example.simple_chat"
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.chatp2p.demo"
+    compileSdk = 33
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -24,11 +24,16 @@ android {
         applicationId = "com.chatp2p.demo"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
-        targetSdk = 34
+        minSdk = 23
+        targetSdk = 33
+        compileSdk = 33
         versionCode = 1
         versionName = "1.0.0"
         multiDexEnabled = true
+
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+        }
     }
 
     buildTypes {
